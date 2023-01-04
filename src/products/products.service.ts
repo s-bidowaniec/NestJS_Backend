@@ -1,45 +1,54 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
-import { db, Product } from './../db';
+import { PrismaService } from 'src/shared/services/prisma/prisma.service';
+//import { db, Product } from '../db';
+import { Product } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProductsService {
-  public getAll(): Product[] {
-    return db.products;
+  constructor(private prismaService: PrismaService) {}
+  public getAll(): Promise<Product[]> {
+    return this.prismaService.product.findMany();
   };
-  public getById(id: Product["id"]): Product | void {
-    const currentProduct = db.products.find(product => product.id === id);
+  public async getById(id: Product["id"]): Promise<Product | void> {
+    const currentProduct: Product | null = await this.prismaService.product.findUnique({
+      where: { id },
+    });
     if (!currentProduct) {
       throw new NotFoundException('Product not found');
     } else {
       return currentProduct;
     }
   };
-  public deleteById(id: Product["id"]): object | void {
-    const currentProduct: Product = db.products.find(product => product.id === id);
+  public async deleteById(id: Product["id"]): Promise<object | void> {
+    const currentProduct: Product | null = await this.prismaService.product.findUnique({
+      where: { id },
+    });
     if (!currentProduct) {
       throw new NotFoundException('Product not found');
     } else {
-      const currentIndex: number = db.products.indexOf(currentProduct);
-      db.products.splice(currentIndex, 1);
+      await this.prismaService.product.delete({
+        where: { id },
+      });
       return { success: true };
     }
   };
-  public createProduct(productData: Omit<Product, 'id'>): Product {
-    const newProduct = { ...productData, id: uuidv4() };
-    db.products.push(newProduct);
-    return newProduct;
+  public async createProduct(productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<object | void> {
+    await this.prismaService.product.create({
+      data: productData,
+    });
+    return { success: true };
   };
-  public updateById(id: Product['id'], productData: Omit<Product, 'id'>): object | void {
-    const currentProduct: Product = db.products.find(product => product.id === id);
+  public async updateById(id: Product['id'], productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<object | void> {
+    const currentProduct: Product | null = await this.prismaService.product.findUnique({
+      where: { id },
+    });
     if (!currentProduct) {
       throw new NotFoundException('Product not found');
     } else {
-      db.products = db.products.map((p) => {
-        if (p.id === id) {
-          return {...p, ...productData};
-        }
-        return p;
+      await this.prismaService.product.update({
+        where: { id },
+        data: productData,
       });
       return { success: true };
     }
