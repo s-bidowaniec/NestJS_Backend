@@ -1,8 +1,6 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
 import { PrismaService } from 'src/shared/services/prisma/prisma.service';
-//import { db, Product } from '../db';
 import { Product } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProductsService {
@@ -11,9 +9,7 @@ export class ProductsService {
     return this.prismaService.product.findMany();
   };
   public async getById(id: Product["id"]): Promise<Product | void> {
-    const currentProduct: Product | null = await this.prismaService.product.findUnique({
-      where: { id },
-    });
+    const currentProduct: Product | null = await this.prismaService.product.findUnique({where: { id }});
     if (!currentProduct) {
       throw new NotFoundException('Product not found');
     } else {
@@ -27,9 +23,7 @@ export class ProductsService {
     if (!currentProduct) {
       throw new NotFoundException('Product not found');
     } else {
-      await this.prismaService.product.delete({
-        where: { id },
-      });
+      await this.prismaService.product.delete({where: { id }});
       return { success: true };
     }
   };
