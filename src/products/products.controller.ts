@@ -13,32 +13,18 @@ export class ProductsController {
         };
     @Get('/:id')
     getById(@Param('id', new ParseUUIDPipe()) id: string) {
-        const currentProd = this.productsService.getById(id);
-        if (!currentProd) {
-            throw new NotFoundException('Product not found');
-        } else {
-            return currentProd;
-        }
+        return this.productsService.getById(id);
     };
     @Delete('/:id')
     deleteById(@Param('id', new ParseUUIDPipe()) id: string){
-        if (!this.productsService.getById(id)) {
-            throw new NotFoundException('Product not found');
-        } else {
-            return this.productsService.deleteById(id);
-            return { success: true };
-        }
+        return this.productsService.deleteById(id);
     };
     @Post('/')
-    create(@Body() productData: CreateProductDTO) {
-        return this.productsService.create(productData);
+    createProduct(@Body() productData: CreateProductDTO) {
+        return this.productsService.createProduct(productData);
     }
     @Put('/:id')
-    update(@Param('id', new ParseUUIDPipe()) id: string, @Body() productData: UpdateProductDTO){
-        if (!this.productsService.getById(id))
-            throw new NotFoundException('Product not found');
-
-        this.productsService.updateById(id, productData);
-        return { success: true }
+    updateProduct(@Param('id', new ParseUUIDPipe()) id: string, @Body() productData: UpdateProductDTO){
+        return this.productsService.updateById(id, productData);
         }
 }
