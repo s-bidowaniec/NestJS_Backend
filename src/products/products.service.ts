@@ -47,4 +47,23 @@ export class ProductsService {
       return { success: true };
     }
   }
+  // Extended
+  public getAllExtended(): Promise<Product[]> {
+    return this.prismaService.product.findMany({
+      include: { orders: true },
+    });
+  };
+  public async getExtendedById(id: Product['id']): Promise<Product | null> {
+    const currentProduct: Product | null = await this.prismaService.product.findUnique({
+      where: { id },
+    });
+    if (!currentProduct) {
+      throw new NotFoundException('Product not found');
+    } else {
+      return this.prismaService.product.findUnique({
+        where: {id},
+        include: {orders: true},
+      });
+    }
+  }
 }

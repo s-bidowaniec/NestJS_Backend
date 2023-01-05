@@ -27,4 +27,13 @@ export class ProductsController {
     updateProduct(@Param('id', new ParseUUIDPipe()) id: string, @Body() productData: UpdateProductDTO){
         return this.productsService.updateById(id, productData);
         }
+    // Extended
+    @Get('/extended')
+    getAllExtended(): any {
+        return this.productsService.getAllExtended();
+    }
+    @Get('/extended/:id')
+    getExtendedById(@Param('id', new ParseUUIDPipe()) id: string) {
+        return  this.productsService.getExtendedById(id);
+    }
 }

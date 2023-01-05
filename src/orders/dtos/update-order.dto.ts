@@ -1,14 +1,12 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 export class UpdateOrderDTO {
-    @IsNotEmpty()
-    @IsString()
-    client: string;
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  clientId: string;
 
-    @IsNotEmpty()
-    @IsString()
-    productId: string;
-
-    @IsNotEmpty()
-    @IsString()
-    address: string;
-};
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  productId: string;
+}
